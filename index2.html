@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FullCalendar</title>
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      type="text/css"
+      rel="stylesheet"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" type="text/css" media="screen" href="style2.css" />
+    <link rel="stylesheet" href="fullcalendar.css" />
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Raleway"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="fullcalendar.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    <h1 class="topic">Klientų sąrašas</h1>
+    <!--left side-->
+    <div id="calendar"></div>
+    <script src="locale/lt.js"></script>
+    <!--right side-->
+    <div class="containerRight">
+      <div class="table-responsive">
+        <br />
+
+        <table class="table table-bordered table-stripes" id="events_table">
+          <tr>
+            <th>Id</th>
+            <th>Vardas, P.</th>
+            <th>Pradžia</th>
+            <th>Pabaiga</th>
+            <th>Kirpeja</th>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      $(document).ready(function() {
+        $.getJSON("Table from JSON/events.json", function(data) {
+          var events_data = "";
+          $.each(data, function(key, value) {
+            events_data += "<tr>";
+            events_data += "<td>" + value.id + "</td>";
+            events_data += "<td>" + value.title + "</td>";
+            events_data += "<td>" + value.start + "</td>";
+            events_data += "<td>" + value.end + "</td>";
+            events_data += "<td>" + value.kirpeja + "</td>";
+            events_data += "</tr>";
+          });
+          $("#events_table").append(events_data);
+        });
+      });
+    </script>
+    <!-- right side end-->
+    <!-- Add event modal -->
+
+    <script>
+      $(function() {
+        $("#calendar").fullCalendar({
+          header: {
+            left: "prev,next today",
+            center: "title",
+            right: "agendaWeek,month,agendaDay",
+            center: "addEventButton"
+          },
+          defaultView: "agendaWeek",
+          editable: true,
+          selectable: true,
+          navLinks: true,
+          allDaySlot: false,
+          axisFormat: "HH:mm",
+          minTime: "09:00:00",
+          maxTime: "20:00:00",
+          slotDuration: "00:15:00",
+          slotLabelInterval: 15,
+          slotLabelFormat: "HH:mm",
+          events: "demos/json/events.json",
+
+          customButtons: {
+            addEventButton: {
+              text: "Pridėti klientą",
+              click: function() {
+                var title = prompt("Įrašykite pavadinima");
+                var dateStr = prompt("Irašykite data MMMM-MM-DD HH:mm");
+                var date = moment(dateStr);
+
+                if (date.isValid()) {
+                  $("#calendar").fullCalendar("renderEvent", {
+                    title: title,
+                    start: date,
+                    allDay: false,
+                    slotDuration: "00:15:00"
+                  });
+                  alert("Puiku");
+                } else {
+                  alert("Invalid date.");
+                }
+              }
+            }
+          },
+          eventRender: function(event, element) {
+            element.find(".fc-bg").css("pointer-events", "none");
+            element.append(
+              "<div style='position:absolute;bottom:0px;right:-12px;top:11px;' ><button type='button' id='btnDeleteEvent' class='btn btn-default'>×</button></div>"
+            );
+            element.find("#btnDeleteEvent").click(function() {
+              $("#calendar").fullCalendar("removeEvents", event._id);
+            });
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
