@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>JSON data</title>
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      type="text/css"
+      rel="stylesheet"
+    />
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="table-responsive">
+        <h1>JSON data to HTML</h1>
+        <br />
+
+        <table class="table table-bordered table-stripes" id="events_table">
+          <tr>
+            <th>Id</th>
+            <th>Vardas, P.</th>
+            <th>Pradžia</th>
+            <th>Pabaiga</th>
+            <th>Kirpeja</th>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      $(document).ready(function() {
+        $.getJSON("events.json", function(data) {
+          var events_data = "";
+          $.each(data, function(key, value) {
+            events_data += "<tr>";
+            events_data += "<td>" + value.id + "</td>";
+            events_data += "<td>" + value.title + "</td>";
+            events_data += "<td>" + value.start + "</td>";
+            events_data += "<td>" + value.end + "</td>";
+            events_data += "<td>" + value.kirpeja + "</td>";
+            events_data += "</tr>";
+          });
+          $("#events_table").append(events_data);
+        });
+      });
+    </script>
+  </body>
+</html>
